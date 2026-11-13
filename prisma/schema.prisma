@@ -1,12 +1,13 @@
-// IngatWaktu — Prisma schema
-// Database: SQLite (file:./dev.db)
+// IngatWaktu — Prisma schema (PRODUCTION / PostgreSQL)
+// Deployed to Vercel / Netlify / Railway / Neon / Supabase.
+// Dev uses schema.prisma (SQLite). Production uses THIS file via DATABASE_URL (postgres://...).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
