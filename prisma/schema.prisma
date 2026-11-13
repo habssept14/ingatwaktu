@@ -1,0 +1,154 @@
+// IngatWaktu — Prisma schema
+// Database: SQLite (file:./dev.db)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  avatarColor   String    @default("#2E86DE") // for avatar initials
+  timezone      String    @default("Asia/Jakarta")
+  wakeTime      String    @default("06:00") // HH:mm
+  sleepTime     String    @default("22:00") // HH:mm
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  categories    Category[]
+  tasks         Task[]
+  timeEntries   TimeEntry[]
+  habits        Habit[]
+  goalSets      GoalSet[]
+  sessions      Session[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionToken String   @unique
+  expires      DateTime
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  color     String   @default("#2E86DE")
+  icon      String   @default("circle")
+  createdAt DateTime @default(now())
+  tasks     Task[]
+
+  @@unique([userId, name])
+}
+
+model Task {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId     String?
+  category       Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  title          String
+  description    String?
+  priority       String       @default("MEDIUM") // LOW | MEDIUM | HIGH
+  status         String       @default("TODO")  // TODO | IN_PROGRESS | DONE | SKIPPED
+
+  // Time-blocking
+  scheduledStart DateTime?
+  scheduledEnd   DateTime?
+  dueDate        DateTime?
+
+  estimateMinutes Int        @default(30)
+
+  // Recurrence (RRULE-like, simplified)
+  isRecurring    Boolean      @default(false)
+  recurrenceRule String?      // e.g. "DAILY", "WEEKLY", "MONTHLY"
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  completedAt    DateTime?
+
+  subtasks       Subtask[]
+  timeEntries    TimeEntry[]
+  reminders      Reminder[]
+
+  @@index([userId, dueDate])
+  @@index([userId, status])
+}
+
+model Subtask {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  title     String
+  isDone    Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model TimeEntry {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId      String?
+  task        Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  startedAt   DateTime
+  endedAt     DateTime?
+  durationMin Int?
+  note        String?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, startedAt])
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  remindAt  DateTime
+  message   String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Habit {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  icon      String      @default("check")
+  color     String      @default("#10B981")
+  createdAt DateTime    @default(now())
+  logs      HabitLog[]
+
+  @@unique([userId, name])
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  loggedAt  DateTime @default(now())
+
+  @@index([habitId, loggedAt])
+}
+
+model GoalSet {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  period    String   // "WEEKLY" | "MONTHLY"
+  target    Int      @default(1)
+  createdAt DateTime @default(now())
+}

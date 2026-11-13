@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2E86DE"/>
+      <stop offset="100%" stop-color="#4DA8FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <!-- Hourglass shape -->
+  <path d="M 20 16 L 44 16 L 32 32 Z" fill="#F5F0E8"/>
+  <path d="M 20 48 L 44 48 L 32 32 Z" fill="#F5F0E8" opacity="0.7"/>
+  <!-- Top rim -->
+  <rect x="18" y="14" width="28" height="3" rx="1.5" fill="#F5F0E8"/>
+  <!-- Bottom rim -->
+  <rect x="18" y="47" width="28" height="3" rx="1.5" fill="#F5F0E8"/>
+</svg>

@@ -1,0 +1,13 @@
+{
+  "name": "IngatWaktu",
+  "short_name": "IngatWaktu",
+  "description": "Ingat Aku, Ingat Waktu — Aplikasi jadwal dan manajemen waktu harian",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0A1628",
+  "theme_color": "#2E86DE",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
